@@ -1,0 +1,7 @@
+--Nano for editing:
+
+nano fetch_latest_goes.py
+
+--Code to run it:
+
+python3 fetch_latest_goes.py
