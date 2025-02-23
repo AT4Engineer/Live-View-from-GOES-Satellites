@@ -1,0 +1,43 @@
+import os
+import time
+import requests
+
+# URLs to scrape the latest image from
+GOES18_URL = "https://cdn.star.nesdis.noaa.gov/GOES18/ABI/FD/GEOCOLOR/latest.j>
+GOES16_URL = "https://cdn.star.nesdis.noaa.gov/GOES16/ABI/FD/GEOCOLOR/latest.j>
+
+# Local folder to save images
+SAVE_DIR = "/home/at4engineer/goes_images"
+
+# Ensure the directory exists
+os.makedirs(SAVE_DIR, exist_ok=True)
+
+def download_and_save_image(image_url, satellite_name):
+    """Downloads the latest image and saves it to the specified directory."""
+    if not image_url:
+        print(f"No image found for {satellite_name}.")
+        return
+    
+    image_path = os.path.join(SAVE_DIR, f"{satellite_name}_latest.jpg")
+    try:
+        response = requests.get(image_url, stream=True)
+        response.raise_for_status()
+
+        with open(image_path, "wb") as file:
+            for chunk in response.iter_content(1024):
+                file.write(chunk)
+
+        print(f"Updated {satellite_name} image: {image_path}")
+    except requests.RequestException as e:
+        print(f"Error downloading {satellite_name} image: {e}")
+
+if __name__ == "__main__":
+    while True:
+        print("Fetching latest images...")
+
+        download_and_save_image(GOES18_URL, "GOES18")
+        download_and_save_image(GOES16_URL, "GOES16")
+
+        print("Waiting 10 minutes before the next check...")
+        time.sleep(600)  # Wait for 10 minutes before checking again
+
